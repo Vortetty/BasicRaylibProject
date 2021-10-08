@@ -2,16 +2,16 @@
 [Desktop Entry]
 
 # Program name
-Name=Test Template Program
+Name=Template Raylib Program
 
 # Executable, should be exact
-Exec=/opt/projectTemplate/main
+Exec=/opt/raylibProjectTemplate/main
 
 # Icon, should be exact
-Icon=/opt/projectTemplate/icon.ico
+Icon=/opt/raylibProjectTemplate/icon.ico
 
-# Unless this isn't a terminal app, leave false
-Terminal=true
+# Unless this is a terminal app, leave true
+Terminal=false
 
 # Don't change, this is an application
 Type=Application

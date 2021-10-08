@@ -3,14 +3,31 @@
 # Other configuration can be done in the install_files dir
 #   any assets should be put there and accessed relative to the compiled program or absolute to it's install dir
 # 
-INCLUDE_FILTER    =#                         Directories to not have in include path
-LINK_LIBRARIES    = -L/usr/lib -Llib -ldl#   Libs to link and paths to link
-DEFINES           =#                         Extra defines
-OPT_FOLDER_NAME   = projectTemplate#         Name of your project's install folder in the opt directory
-DESKTOP_FILE_NAME = projectTemplate.desktop# Name of your project's desktop file
-BINARY_NAME       = main#                    Name of your project's binary
+
+# Directories to not have in include path
+INCLUDE_FILTER = -Isrc/raylib/src/external/
+
+# Libs to link and paths to link
+LINK_LIBRARIES = -L/usr/lib -Llib -ldl
+
+# Extra defines
+DEFINES = -D_DEFAULT_SOURCE -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33 
+
+# Name of your project's install folder in the opt directory
+OPT_FOLDER_NAME = raylibProjectTemplate
+
+# Name of your project's desktop file
+DESKTOP_FILE_NAME = projectTemplate.desktop
+
+# Name of your project's binary
+BINARY_NAME = main
 
 
+
+# 
+# Build stuff
+# Feel free to edit but it all works already
+# 
 SRC_DIR := src
 OBJ_DIR := src
 C_SRC_FILES := $(filter-out src/raylib/src/external,$(shell find $(SRC_DIR)/ -path src/raylib/src/external -prune -o -type f -name '*.c'))
@@ -33,6 +50,20 @@ ifeq ($(.SHELLSTATUS),0)
 				-mllvm -polly-vectorizer=stripmine
 endif
 
+GLFW_DEFINES = 
+ifeq ($(OS),Windows_NT)
+	GLFW_DEFINES = -D_GLFW_WIN32=1
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        GLFW_DEFINES = -D_GLFW_X11=1
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        GLFW_DEFINES = -D_GLFW_COCOA=1
+    endif
+endif
+DEFINES := $(DEFINES) $(GLFW_DEFINES)
+
 GDB_OPTS = 
 
 #  ____        _ _     _
@@ -49,7 +80,9 @@ ifeq ($(UNAME_S),Linux)
 .PHONY: build run gdb clean
 
 build: $(OBJ_FILES)
-	clang++ -std=c++20 -o bin/$(BINARY_NAME) $(OBJ_FILES) $(INCLUDE_DIRS) $(LINK_LIBRARIES) -pthreads -O3 $(IGNORE_ISO) $(POLLY_OPTS) -Wl,-s
+	-rm -rf bin
+	-mkdir bin
+	clang++ -std=c++20 -o bin/$(BINARY_NAME) $(OBJ_FILES) $(INCLUDE_DIRS) $(LINK_LIBRARIES) -pthreads -O3 $(IGNORE_ISO) $(POLLY_OPTS) $(DEFINES) -Wl,-s
 
 run:
 	./bin/$(BINARY_NAME)
@@ -58,7 +91,9 @@ test: build
 	./bin/$(BINARY_NAME)
 
 gdb: setGdbOpts $(OBJ_FILES)
-	clang++ -std=c++20 -o bin/$(BINARY_NAME) $(OBJ_FILES) $(INCLUDE_DIRS) $(LINK_LIBRARIES) -pthreads -O3 $(IGNORE_ISO) $(POLLY_OPTS) -Wl,-s -g
+	-rm -rf bin
+	-mkdir bin
+	clang++ -std=c++20 -o bin/$(BINARY_NAME) $(OBJ_FILES) $(INCLUDE_DIRS) $(LINK_LIBRARIES) -pthreads -O3 $(IGNORE_ISO) $(POLLY_OPTS) $(DEFINES) -Wl,-s -g
 	gdb -ex run bin/$(BINARY_NAME)
 
 setGdbOpts:
@@ -91,11 +126,11 @@ endif
 
 
 $(C_OBJ_FILES): %.o: %.c
-	clang -std=c99 -c -o $@ $< $(INCLUDE_DIRS) -pthreads -O3 $(IGNORE_ISO) -fPIC $(POLLY_OPTS) $(GDB_OPTS)
+	clang -std=c99 -c -o $@ $< $(INCLUDE_DIRS) -pthreads -O3 $(IGNORE_ISO) -fPIC $(POLLY_OPTS) $(GDB_OPTS) $(DEFINES)
 $(CC_OBJ_FILES): %.o: %.cc
-	clang++ -std=c++20 -c -o $@ $< $(INCLUDE_DIRS) -pthreads -O3 $(IGNORE_ISO) -fPIC $(POLLY_OPTS) $(GDB_OPTS)
+	clang++ -std=c++20 -c -o $@ $< $(INCLUDE_DIRS) -pthreads -O3 $(IGNORE_ISO) -fPIC $(POLLY_OPTS) $(GDB_OPTS) $(DEFINES)
 $(CPP_OBJ_FILES): %.o: %.cpp
-	clang++ -std=c++20 -c -o $@ $< $(INCLUDE_DIRS) -pthreads -O3 $(IGNORE_ISO) -fPIC $(POLLY_OPTS) $(GDB_OPTS)
+	clang++ -std=c++20 -c -o $@ $< $(INCLUDE_DIRS) -pthreads -O3 $(IGNORE_ISO) -fPIC $(POLLY_OPTS) $(GDB_OPTS) $(DEFINES)
 #$(OBJ_FILES):
 #	clang++ -std=c++20 -c -o $@ $< $(INCLUDE_DIRS) -pthreads -O3 $(IGNORE_ISO) -fPIC $(POLLY_OPTS) $(GDB_OPTS)
 
