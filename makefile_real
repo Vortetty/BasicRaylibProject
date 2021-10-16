@@ -1,7 +1,13 @@
 # 
 # Config vars
 # Other configuration can be done in the install_files dir
-#   any assets should be put there and accessed relative to the compiled program or absolute to it's install dir
+#   Any assets should be put there and accessed relative to the compiled program or absolute to it's install dir
+# 
+# To set the github link for documentation open `doxygen/header.html` and change the link on line 34.
+# To set the opengraph info for things like a discord embed:
+#   Title is on line 10
+#   Description is on line 12
+#   Url is on like 13
 # 
 
 # Directories to not have in include path
