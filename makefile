@@ -8,25 +8,52 @@ ifeq ($(UNAME_S),Linux)
 .PHONY: build run gdb clean
 
 build:
-	@make build -j$(CORES) -f makefile_real $@
+	@make build -j$(CORES) -f makefile_real --no-print-directory $@
 
 run:
-	@make run -j$(CORES) -f makefile_real $@
+	@make run -j$(CORES) -f makefile_real --no-print-directory $@
 
 test:
-	@make test -j$(CORES) -f makefile_real $@
+	@make test -j$(CORES) -f makefile_real --no-print-directory $@
 
 gdb:
-	@make gdb -j$(CORES) -f makefile_real $@
+	@make gdb -j$(CORES) -f makefile_real --no-print-directory $@
 
 clean:
-	@make clean -j$(CORES) -f makefile_real $@
+	@make clean -j$(CORES) -f makefile_real --no-print-directory $@
 
 install:
-	@make install -j$(CORES) -f makefile_real $@
+	@make install -j$(CORES) -f makefile_real --no-print-directory $@
 
 uninstall:
-	@make uninstall -j$(CORES) -f makefile_real $@
+	@make uninstall -j$(CORES) -f makefile_real --no-print-directory $@
+
+docs:
+	@make docs -j$(CORES) -f makefile_real --no-print-directory $@
+
+header:
+	@make header -j$(CORES) -f makefile_real --no-print-directory $@
+single: header
+single_header: header
+singleHeader: header
+gen_header: header
+gen_single_header: header
+genHeader: header
+genSingleHeader: header
+
+prep_publish: header docs
+publish: prep_publish
+	git add .
+	git commit
+	git pull
+	git push
+push: publish
+git: publish
+
+install_deps:
+	@make install_deps -j$(CORES) -f makefile_real --no-print-directory $@
+deps: install_deps
+setup: install_deps
 
 endif
 
