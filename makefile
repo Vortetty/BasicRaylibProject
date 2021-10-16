@@ -31,7 +31,7 @@ uninstall:
 docs:
 	@make docs -j$(CORES) -f makefile_real --no-print-directory $@
 
-prep_publish: header docs
+prep_publish: docs
 publish: prep_publish
 	git add .
 	git commit
