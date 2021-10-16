@@ -22,6 +22,14 @@ DESKTOP_FILE_NAME = projectTemplate.desktop
 # Name of your project's binary
 BINARY_NAME = main
 
+# Doxygen config
+#  Escape anything that bash would interpret as a "
+#  Nothing needs quotes added around it
+INPUT_FILES   = README.md
+PROJECT_NAME  = Basic Raylib Project
+PROJECT_BRIEF = A simple scene api for Raylib (or anything really)
+PROJECT_LOGO  = 
+
 
 
 # 
@@ -125,7 +133,11 @@ else
 endif
 
 docs:
-	doxygen Doxyfile
+	( cat Doxyfile ; \
+		echo "PROJECT_NAME = \"$(PROJECT_NAME)\"" ; \
+		echo "PROJECT_BRIEF = \"$(PROJECT_BRIEF)\"" ; \
+		echo "PROJECT_LOGO = $(PROJECT_LOGO)" ; \
+		echo "INPUT = $(INPUT_FILES)" ) | doxygen -
 
 header:
 	python3 scripts/makeSingleHeader.py
