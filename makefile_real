@@ -139,9 +139,6 @@ docs:
 		echo "PROJECT_LOGO = $(PROJECT_LOGO)" ; \
 		echo "INPUT = $(INPUT_FILES)" ) | doxygen -
 
-header:
-	python3 scripts/makeSingleHeader.py
-
 install_deps:
 	$(eval python3Installed = $(shell command -v python3 >/dev/null 2>&1))
 ifneq ($(.SHELLSTATUS),0)
